@@ -9,6 +9,8 @@
 #include <stdarg.h>
 #include <fcntl.h>
 
+/*STRUCTURES*/
+
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
@@ -56,12 +58,39 @@ typedef struct global_s
 	FILE *file_ref;
 } global_t;
 
-void (push_op)(stack_t **stack, unsigned int line_number);
-void (pall_op)(stack_t **stack, unsigned int line_number);
-void (pint_op)(stack_t **stack, unsigned int line_number);
-void (pop_op)(stack_t **stack, unsigned int line_number);
-void (swap_op)(stack_t **stack, unsigned int line_number);
-void (add_op)(stack_t **stack, unsigned int line_number);
-void (nop_op)(stack_t **stack, unsigned int line_number);
+/* declared in monty_main.c*/
+extern struct global_s glob_file;
+
+/*PROTOTYPES*/
+
+/* function found in opcode_handler.c */
+void opcode_handler(stack_t **stack);
+void handle_short_stack(instruction_t *handle, stack_t **stack);
+
+/* functions found in opcode1.c */
+void pall_op(stack_t **stack, unsigned int line_number);
+void pint_op(stack_t **stack, unsigned int line_number);
+void pop_op(stack_t **stack, unsigned int line_number);
+
+/*functions found in opcode2,c */
+void push_op(stack_t **stack, unsigned int line_number);
+void swap_op(stack_t **stack, unsigned int line_number);
+void add_op(stack_t **stack, unsigned int line_number);
+void nop_op(stack_t **stack, unsigned int line_number);
+
+/*function found in file_parse.c */
+void file_parse(char *current_line, const char *delims, stack_t **stack_ptr);
+
+/*function found in monty_aux.c */
+int is_integer(char *str);
+
+/*main function fount in monty_main.c */
+int main(int argc, char *argv[]);
+
+/*function fount in monty_interpreter.c*/
+void monty_interpreter(const char *file_path);
+
+/* function found in free_stack.c*/
+void free_stack(stack_t **stack);
 
 #endif

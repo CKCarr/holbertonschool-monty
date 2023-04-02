@@ -2,19 +2,29 @@
 /**
  * free_stack - frees all nodes in a DLL stack
  * @stack: pointer to DLL stack_t stack
- *
  * Return: void
  */
 void free_stack(stack_t **stack)
 {
-	stack_t *current = *stack, *tmp;
+	stack_t *free_s;
 
-	while (current)
+	if (*stack)
 	{
-		tmp = current;
-		current = current->next;
-		free(tmp);
+		while (*stack)
+		{
+			free_s = (*stack);
+			free(*stack);
+			(*stack) = NULL;
+			(*stack) = free_s;
+		}
 	}
-
-	*stack = NULL;
+	if (glob_file.file_line)
+	{
+		free(glob_file.file_line);
+	}
+	if (glob_file.file_ref && feof(glob_file.file_ref) == 0)
+	{
+		fclose(glob_file.file_ref);
+		glob_file.file_ref = NULL;
+	}
 }
