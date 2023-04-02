@@ -8,8 +8,7 @@
   */
 void swap_op(stack_t **stack, unsigned int line_number)
 {
-	stack_t *current;
-	int count = 0;
+	stack_t *temp;
 
 	if (*stack == NULL || (*stack)->next == NULL)
 	{
@@ -23,7 +22,7 @@ void swap_op(stack_t **stack, unsigned int line_number)
 		temp->next->prev = *stack;
 	}
 	temp->prev = temp->next;
-	temp->next = stack;
+	temp->next = *stack;
 	(*stack)->prev = temp;
 	(*stack) = temp;
 }
@@ -57,7 +56,7 @@ void add_op(stack_t **stack, unsigned int line_number)
 		}
 	}
 	(temp->next)->n = temp->n + (temp->next)->n;
-	op_pop(stack, line_number);
+	pop_op(stack, line_number);
 }
 /**
   * nop_op - function that doesn't do anything.
@@ -76,24 +75,21 @@ void nop_op(stack_t **stack, unsigned int line_number)
   * @line_number: current line number in file.
   * Return: void
   */
-void push_op(stack_t *stack, unsigned int line_number)
+void push_op(stack_t **stack, unsigned int line_number)
 {
 	char *arg;
 	int val;
 	stack_t *new_node;
 
-	arg = strtok(NULL, " $\t\n");
-	if (!arg)
+	arg = strtok(NULL, " \t\n$");
+	if (!arg || !is_integer(arg))
 	{
 		fprintf(stderr, " L%u: usage: push integer\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-	if (!isdigit(arg[0]) && arg[0] != '-')
-	{
-		fprintf(stderr, " L%u: usage: push integer\n", line_number);
+		free_stack(stack);
 		exit(EXIT_FAILURE);
 	}
 	val = atoi(arg);
+	printf("Pushing value: %d\n", val);
 	new_node = malloc(sizeof(stack_t));
 	if (!new_node)
 	{
@@ -102,7 +98,7 @@ void push_op(stack_t *stack, unsigned int line_number)
 	}
 	new_node->n = val;
 	new_node->prev = NULL;
-	if (*stack)
+	if (stack)
 	{
 		new_node->next = *stack;
 		(*stack)->prev = new_node;
@@ -113,4 +109,6 @@ void push_op(stack_t *stack, unsigned int line_number)
 
 	}
 	*stack = new_node;
+	printf("Stack after push: ");
+	pall_op(stack, line_number);
 }
