@@ -1,114 +1,119 @@
 #include "monty.h"
-/**
-  * swap_op - function that swaps the top 2 elements of the stack.
-  * @stack: stack struct DLL.
-  * @line_number:
-  *
-  * Return: void
-  */
-void swap_op(stack_t **stack, unsigned int line_number)
-{
-	stack_t *temp;
 
-	if (*stack == NULL || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%u: can't swap, stack too short\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-	temp = (*stack)->next;
-	(*stack)->next = temp->next;
-	if (temp->next != NULL)
-	{
-		temp->next->prev = *stack;
-	}
-	temp->prev = temp->next;
-	temp->next = *stack;
-	(*stack)->prev = temp;
-	(*stack) = temp;
+/**
+ * swap_monty - swaps top two nodes of stack
+ * @stack: DLL type stack
+ * @line_number: line number from inbound file
+ * Return: void
+ */
+void swap_monty(stack_t **stack, unsigned int line_number)
+{
+	stack_t *nodeHold;
+	char *errMsg1 = ": can't swap, stack too short\n";
+
+	if (!(*stack))
+		free_stack(stack, errMsg1);
+	if (!(*stack)->next)
+		free_stack(stack, errMsg1);
+	nodeHold = (*stack)->next;
+	(*stack)->next = nodeHold->next;
+	(*stack)->prev = nodeHold;
+	nodeHold->next = (*stack);
+	nodeHold->prev = NULL;
+	(*stack) = nodeHold;
+	(void) line_number;
 }
-/**
-  * add_op - function that adds the top two
-  * @stack: stack structure DLL
-  * @line_number: number of line in the file.
-  * Return: void.
-  */
-void add_op(stack_t **stack, unsigned int line_number)
-{
-	stack_t *temp = *stack;
-	stack_t *current = *stack;
-	int count = 0;
 
-	if (*stack == NULL)
-	{
-		return;
-	}
-	while (current)
-	{
-		count++;
-		current = current->next;
-	}
-	if (count < 2)
-	{
-		if (temp == NULL || (*stack)->next == NULL)
-		{
-			fprintf(stderr, "L%u: can't add, stack too short\n", line_number);
-			exit(EXIT_FAILURE);
-		}
-	}
-	(temp->next)->n = temp->n + (temp->next)->n;
-	pop_op(stack, line_number);
+/**
+ * add_monty - adds top 2 nodes of stack
+ * @stack: DLL type stack
+ * @line_number: line number from inbound file
+ * Return: void
+ */
+void add_monty(stack_t **stack, unsigned int line_number)
+{
+	stack_t *nodeHold;
+	char *errMsg1 = ": can't add, stack too short\n";
+
+	if (!(*stack))
+		free_stack(stack, errMsg1);
+	if (!((*stack)->next))
+		free_stack(stack, errMsg1);
+	nodeHold = (*stack);
+	nodeHold->next->n = (((*stack)->n) + ((*stack)->next->n));
+	(*stack) = nodeHold->next;
+	free(nodeHold);
+	(void) line_number;
 }
+
 /**
-  * nop_op - function that doesn't do anything.
-  * @stack: stack structure DLL.
-  * @line_number: number of line in the file.
-  * Return: void
-  */
-void nop_op(stack_t **stack, unsigned int line_number)
+ * sub_monty - subtracts top 2 nodes of stack
+ * @stack: DLL type stack
+ * @line_number: line number from inbound file
+ * Return: void
+ */
+void sub_monty(stack_t **stack, unsigned int line_number)
 {
-	(void)stack;
-	(void)line_number;
+	stack_t *tmpNode;
+	char *errMsg1 = ": can't sub, stack too short\n";
+
+	if (!(*stack))
+		free_stack(stack, errMsg1);
+	if (!((*stack)->next))
+		free_stack(stack, errMsg1);
+	tmpNode = (*stack);
+	tmpNode->next->n -= tmpNode->n;
+	(*stack) = (*stack)->next;
+	(*stack)->prev = NULL;
+	free(tmpNode);
+	(void) line_number;
 }
+
 /**
-  * push_op - insert element to top of the stack.
-  * @stack: pointer to the stack.
-  * @line_number: current line number in file.
-  * Return: void
-  */
-void push_op(stack_t **stack, unsigned int line_number)
+ * div_monty - divides top 2 nodes of stack
+ * @stack: DLL type stack
+ * @line_number: line number from inbound file
+ * Return: void
+ */
+void div_monty(stack_t **stack, unsigned int line_number)
 {
-	char *arg;
-	int val;
-	stack_t *new_node;
+	stack_t *tmpNode;
+	char *errMsg1 = ": can't div, stack too short\n";
+	char *errMsg2 = ": division by zero\n";
 
-	arg = strtok(NULL, " \t\n$");
-	if (!arg || !is_integer(arg))
-	{
-		fprintf(stderr, " L%u: usage: push integer\n", line_number);
-		free_stack(stack);
-		exit(EXIT_FAILURE);
-	}
-	val = atoi(arg);
-	printf("Pushing value: %d\n", val);
-	new_node = malloc(sizeof(stack_t));
-	if (!new_node)
-	{
-		fprintf(stderr, "Error: malloc failed\n");
-		exit(EXIT_FAILURE);
-	}
-	new_node->n = val;
-	new_node->prev = NULL;
-	if (stack)
-	{
-		new_node->next = *stack;
-		(*stack)->prev = new_node;
-	}
-	else
-	{
-		new_node->next = NULL;
+	if (!(*stack))
+		free_stack(stack, errMsg1);
+	if (!((*stack)->next))
+		free_stack(stack, errMsg1);
+	if ((*stack)->n == 0)
+		free_stack(stack, errMsg2);
+	tmpNode = (*stack);
+	tmpNode->next->n /= tmpNode->n;
+	(*stack) = (*stack)->next;
+	(*stack)->prev = NULL;
+	free(tmpNode);
+	(void) line_number;
+}
 
-	}
-	*stack = new_node;
-	printf("Stack after push: ");
-	pall_op(stack, line_number);
+/**
+ * mul_monty - multiplies top 2 nodes of stack
+ * @stack: DLL type stack
+ * @line_number: line number from inbound file
+ * Return: void
+ */
+void mul_monty(stack_t **stack, unsigned int line_number)
+{
+	stack_t *tmpNode;
+	char *errMsg1 = ":can't mul, stack too short\n";
+
+	if (!(*stack))
+		free_stack(stack, errMsg1);
+	if (!((*stack)->next))
+		free_stack(stack, errMsg1);
+	tmpNode = (*stack);
+	tmpNode->next->n *= tmpNode->n;
+	(*stack) = (*stack)->next;
+	(*stack)->prev = NULL;
+	free(tmpNode);
+	(void) line_number;
 }

@@ -1,30 +1,38 @@
 #include "monty.h"
 /**
- * free_stack - frees all nodes in a DLL stack
- * @stack: pointer to DLL stack_t stack
+ * free_stack - free DLL type stack
+ * @stack: DLL type stack head
+ * @messg: associated exit message
  * Return: void
  */
-void free_stack(stack_t **stack)
+void free_stack(stack_t **stack, char *messg)
 {
-	stack_t *free_s;
+	stack_t *scrubber;
 
+	if (messg)
+	{
+		if (messg[0] == '!')
+		{
+			messg++;
+			fprintf(stderr, "L%d%s%s\n", glob_file.op_line, messg, glob_file.op_code);
+		}
+		else
+			fprintf(stderr, "L%d%s", glob_file.op_line, messg);
+	}
+	if (glob_file.line_ref)
+		free(glob_file.line_ref);
+	fclose(glob_file.file_ref);
 	if (*stack)
 	{
 		while (*stack)
 		{
-			free_s = (*stack);
+			scrubber = (*stack)->next;
 			free(*stack);
-			(*stack) = NULL;
-			(*stack) = free_s;
+			(*stack) = scrubber;
 		}
 	}
-	if (glob_file.file_line)
-	{
-		free(glob_file.file_line);
-	}
-	if (glob_file.file_ref && feof(glob_file.file_ref) == 0)
-	{
-		fclose(glob_file.file_ref);
-		glob_file.file_ref = NULL;
-	}
+	if (messg)
+		exit(EXIT_FAILURE);
+	else
+		return;
 }

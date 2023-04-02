@@ -1,7 +1,9 @@
 #ifndef MONTY_H
 #define MONTY_H
-#define DELIMS  " \t\n"
 
+/*
+ * libraries - to be included
+ */
 #include <ctype.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -9,8 +11,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <fcntl.h>
-
-/*STRUCTURES*/
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -27,12 +27,14 @@ typedef struct stack_s
 	struct stack_s *prev;
 	struct stack_s *next;
 } stack_t;
+
 /**
- *struct instruction_s - opcode and its function
- *@opcode: the opcode
- *@f: function to handle the opcode
- *Description: opcode and its function
- *for stack, queues, LIFO, FIFO
+ * struct instruction_s - opcode and its function
+ * @opcode: the opcode
+ * @f: function to handle the opcode
+ *
+ * Description: opcode and its function
+ * for stack, queues, LIFO, FIFO
  */
 typedef struct instruction_s
 {
@@ -41,57 +43,53 @@ typedef struct instruction_s
 } instruction_t;
 
 /**
- * struct global_s - global variable structure
- * @op_code: the opcode string for current instruction being executed
- * @op_arg: associated argument string for the current instruction
- * @op_line: line number of inbound file for current line instruction
- * @file_line: pointer to current line being read from
- * @file_ref: pointer to input file being read from
- * description: global variables that are used throughout the program
+ * struct global_s - global struct
+ * @op_code: the opcode
+ * @op_arg: associated argument if applicable
+ * @op_mode: operation mode
+ * @op_line: line of inbound file
+ * @line_ref: pointer to line
+ * @file_ref: pointer to FILE
+ * Description: The Way
+ * for stack, queues, LIFO, FIFO
  */
-
 typedef struct global_s
 {
 	char *op_code;
 	char *op_arg;
+	unsigned int op_mode;
 	unsigned int op_line;
-	char *file_line;
+	char *line_ref;
 	FILE *file_ref;
 } global_t;
 
-/* declared in monty_main.c*/
 extern struct global_s glob_file;
 
-/*PROTOTYPES*/
+/* defined in theWay.c */
+void op_fun_res(stack_t **stack);
 
-/* function found in opcode_handler.c */
-void opcode_handler(stack_t **stack);
-void handle_short_stack(instruction_t *handle, stack_t **stack);
+/* defined in opcodes_alpha.c */
+void push_monty(stack_t **stack, unsigned int line_number);
+void pall_monty(stack_t **stack, unsigned int line_number);
+void pint_monty(stack_t **stack, unsigned int line_number);
+void nop_monty(stack_t **stack, unsigned int line_number);
+void pop_monty(stack_t **stack, unsigned int line_number);
 
-/* functions found in opcode1.c */
-void pall_op(stack_t **stack, unsigned int line_number);
-void pint_op(stack_t **stack, unsigned int line_number);
-void pop_op(stack_t **stack, unsigned int line_number);
+/* defined in opcodes_bravo.c */
+void swap_monty(stack_t **stack, unsigned int line_number);
+void add_monty(stack_t **stack, unsigned int line_number);
+void sub_monty(stack_t **stack, unsigned int line_number);
+void div_monty(stack_t **stack, unsigned int line_number);
+void mul_monty(stack_t **stack, unsigned int line_number);
 
-/*functions found in opcode2,c */
-void push_op(stack_t **stack, unsigned int line_number);
-void swap_op(stack_t **stack, unsigned int line_number);
-void add_op(stack_t **stack, unsigned int line_number);
-void nop_op(stack_t **stack, unsigned int line_number);
+/* defined in opcodes_charlie.c */
+void mod_monty(stack_t **stack, unsigned int line_number);
+void pchar_monty(stack_t **stack, unsigned int line_number);
+void pstr_monty(stack_t **stack, unsigned int line_number);
+void rotl_monty(stack_t **stack, unsigned int line_number);
+void rotr_monty(stack_t **stack, unsigned int line_number);
 
-/*function found in file_parse.c */
-void file_parse(char *current_line, const char *delims, stack_t **stack_ptr);
-
-/*function found in monty_aux.c */
-int is_integer(char *str);
-
-/*main function fount in monty_main.c */
-int main(int argc, char *argv[]);
-
-/*function fount in monty_interpreter.c*/
-void monty_interpreter(const char *file_path);
-
-/* function found in free_stack.c*/
-void free_stack(stack_t **stack);
+/* defined in freedom.c */
+void free_stack(stack_t **stack, char *messg);
 
 #endif
