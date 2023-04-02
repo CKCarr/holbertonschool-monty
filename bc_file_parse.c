@@ -25,4 +25,10 @@ void bc_file_parse(char *current_line, const char *delims, stack_t **stack_ptr)
 	glob_file.op_arg = strtok(NULL, delims);
 	/*Call the opcode handler function to process the instruction*/
 	opcode_handler(stack_ptr);
+	if (opcode_handler(stack_ptr) == -1)
+    {
+        // Error occurred during instruction processing
+        fprintf(stderr, "L%d: unknown instruction %s\n", glob_file.op_line, glob_file.op_code);
+        exit(EXIT_FAILURE);  // or return -1 if you want to handle the error in a higher-level function
+    }
 }
