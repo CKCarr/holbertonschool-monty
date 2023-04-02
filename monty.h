@@ -1,5 +1,6 @@
 #ifndef MONTY_H
 #define MONTY_H
+#define DELIMS  " \t\n"
 
 #include <ctype.h>
 #include <unistd.h>
